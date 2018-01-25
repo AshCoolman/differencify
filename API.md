@@ -342,14 +342,19 @@ In this example, differencify will got to different pages and compare screenshot
 
 ```js
 (async () => {
+  let cache = {};
   await differencify
     .init()
     .newPage()
     .goto('https://www.google.co.uk')
-    .screenshot({toCache: 'UK'})
+    .screenshot()
+    .then(img => {
+      cache['uk'] = img;
+      return img;
+    })
     .goto('https://www.google.com.au')
     .screenshot()
-    .toMatchSnapshot({fromCache: 'AU'})
+    .toMatchSnapshot(cache['uk'])
     .result((result) => {
       console.log(result); // True or False
     })
@@ -368,12 +373,12 @@ In this example, differencify will go to one page and cache the screenshot, then
   await page.goto('https://www.google.co.uk');
   await page.setViewport({ width: 1600, height: 1200 });
   await page.waitFor(1000);
-  await page.screenshot({toCache: 'UK');
+  const imageCached = await page.screenshot();
   await page.goto('https://www.google.com.au');
   await page.setViewport({ width: 1600, height: 1200 });
   await page.waitFor(1000);
   const image = await page.screenshot();
-  const result = await target.toMatchSnapshot(image, {fromCache: 'UK'});
+  const result = await target.toMatchSnapshot(image, imageCached);
   await page.close();
   console.log(result); // True or False
 })();
