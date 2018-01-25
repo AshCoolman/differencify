@@ -338,6 +338,46 @@ In this example, differencify will got to different pages and compare screenshot
 ```
 In this example, differencify will got to different pages and compare screenshots with reference screenshots.
 
+## Compare different pages using cache
 
+```js
+(async () => {
+  await differencify
+    .init()
+    .newPage()
+    .goto('https://www.google.co.uk')
+    .screenshot({toCache: 'UK'})
+    .goto('https://www.google.com.au')
+    .screenshot()
+    .toMatchSnapshot({fromCache: 'AU'})
+    .result((result) => {
+      console.log(result); // True or False
+    })
+    .close()
+    .end();
+})();
+```
+In this example, differencify will go to one page and cache the screenshot, then go to srcreenshot and compare a new page to the previous cached copy. No reference snapshot persists.
+
+## Compare different pages using cache when unchained
+
+```js
+(async () => {
+  const target = differencify.init({ chain: false });
+  const page = await target.newPage();
+  await page.goto('https://www.google.co.uk');
+  await page.setViewport({ width: 1600, height: 1200 });
+  await page.waitFor(1000);
+  await page.screenshot({toCache: 'UK');
+  await page.goto('https://www.google.com.au');
+  await page.setViewport({ width: 1600, height: 1200 });
+  await page.waitFor(1000);
+  const image = await page.screenshot();
+  const result = await target.toMatchSnapshot(image, {fromCache: 'UK'});
+  await page.close();
+  console.log(result); // True or False
+})();
+```
+In this example, differencify will go to one page and cache the screenshot, then go to srcreenshot and compare a new page to the previous cached copy. No reference snapshot persists.
 
 
