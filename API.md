@@ -338,6 +338,51 @@ In this example, differencify will got to different pages and compare screenshot
 ```
 In this example, differencify will got to different pages and compare screenshots with reference screenshots.
 
+## Compare different pages using cache
 
+```js
+(async () => {
+  const cachedImage;
+  await differencify
+    .init()
+    .newPage()
+    .goto('https://www.bing.com')
+    .screenshot()
+    .introspect((context) => {
+      cachedImage = context.image;
+    })
+    .goto('https://www.google.com')
+    // In chained, "a" and "b" must be functions that return Buffers, else an error is thrown
+    // "a" defaults to target.image
+    .compareImages({b: () => cachedImage}) 
+    .result((result) => {
+      console.log(result); // True or False
+    })
+    .close()
+    .end();
+})();
+```
+In this example, differencify will go to one page and cache the screenshot, then go to srcreenshot and compare a new page to the previous cached copy. No reference snapshot persists.
+
+## Compare different pages using cache when unchained
+
+```js
+(async () => {
+  const target = differencify.init({ chain: false });
+  const page = await target.newPage();
+  await page.goto('https://www.google.co.uk');
+  await page.setViewport({ width: 1600, height: 1200 });
+  await page.waitFor(1000);
+  const imageCached = await page.screenshot();
+  await page.goto('https://www.google.com.au');
+  await page.setViewport({ width: 1600, height: 1200 });
+  await page.waitFor(1000);
+  const image = await page.screenshot();
+  const result = await target.compareImages({a: image, b: imageCached});
+  await page.close();
+  console.log(result); // True or False
+})();
+```
+In this example, differencify will go to one page and cache the screenshot, then go to srcreenshot and compare a new page to the previous cached copy. No reference snapshot persists.
 
 
