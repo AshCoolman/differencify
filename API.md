@@ -342,19 +342,19 @@ In this example, differencify will got to different pages and compare screenshot
 
 ```js
 (async () => {
-  const cache = {};
+  const cachedImage;
   await differencify
     .init()
     .newPage()
     .goto('https://www.bing.com')
     .screenshot()
     .introspect((context) => {
-      cache.prev = context.image;
+      cachedImage = context.image;
     })
     .goto('https://www.google.com')
-    // In chained, a and b must be functions, else throw error
-    // a defaults to target.image
-    .compareImages({b: () => cache.prev}) 
+    // In chained, "a" and "b" must be functions that return Buffers, else an error is thrown
+    // "a" defaults to target.image
+    .compareImages({b: () => cachedImage}) 
     .result((result) => {
       console.log(result); // True or False
     })
