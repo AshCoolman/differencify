@@ -352,7 +352,7 @@ In this example, differencify will got to different pages and compare screenshot
       cache.prev = context.image;
     })
     .goto('https://www.google.com')
-    .toMatchSnapshot(cache.prev)
+    .toMatchSnapshot(() => cache.prev)
     .result((result) => {
       console.log(result); // True or False
     })
