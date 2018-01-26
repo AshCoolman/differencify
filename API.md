@@ -354,7 +354,7 @@ In this example, differencify will got to different pages and compare screenshot
     .goto('https://www.google.com')
     // In chained, a and b must be functions, else throw error
     // a defaults to target.image
-    .toCompare({b: () => cache.prev}) 
+    .compareImages({b: () => cache.prev}) 
     .result((result) => {
       console.log(result); // True or False
     })
@@ -378,7 +378,7 @@ In this example, differencify will go to one page and cache the screenshot, then
   await page.setViewport({ width: 1600, height: 1200 });
   await page.waitFor(1000);
   const image = await page.screenshot();
-  const result = await target.toCompare({a: image, b: imageCached});
+  const result = await target.compareImages({a: image, b: imageCached});
   await page.close();
   console.log(result); // True or False
 })();
