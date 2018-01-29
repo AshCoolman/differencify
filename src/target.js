@@ -107,6 +107,18 @@ export default class Target {
     return null;
   }
 
+  async introspect(fn) {
+    // console.log('async introspect', fn);
+    if (!this.error) {
+      try {
+        fn(this);
+      } catch (error) {
+        this._logError(error);
+      }
+    }
+    return null;
+  }
+
   async capture(options) {
     if (!this.error) {
       try {
@@ -194,10 +206,12 @@ export default class Target {
     }
   }
 
-  async toMatchSnapshot(image) {
+  async toMatchSnapshot(image, operations = {}) {
     if (image) {
       this.image = image;
     }
+
+    this.testConfig.operations = operations;
     if (this.testConfig.isJest) {
       this.testConfig.testName = this.testId
         ? `${this.testStats.currentTestName} ${this.testId}`
